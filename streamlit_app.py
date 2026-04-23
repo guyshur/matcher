@@ -146,7 +146,7 @@ else:
             })
 
         results_df = pd.DataFrame(results)
-        st.dataframe(results_df, use_container_width=True, hide_index=True)
+        st.dataframe(results_df, width='stretch', hide_index=True)
 
         st.metric("Total Satisfaction Score", f"{total_score:.0f}")
 
@@ -159,8 +159,8 @@ else:
             )
             # Replace 0s with empty string for clarity
             matrix_df = matrix_df.replace(0, "")
-            st.dataframe(matrix_df.applymap(
-                lambda x: f"-{x:.0f}" if x != "" else "", na_action='ignore'), use_container_width=True)
+            st.dataframe(matrix_df.map(
+                lambda x: f"-{x:.0f}" if x != "" else "", na_action='ignore'), width='stretch')
     else:
         st.info("Enter preferences above to run the matching algorithm.")
 

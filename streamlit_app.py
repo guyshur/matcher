@@ -327,6 +327,18 @@ else:
                 + ", ".join(f"**{name}**" for name in unmatched)
             )
 
+        # Identify List 1 items matched to something they never ranked
+        no_preference_matches = [
+            st.session_state.list1_items[i]
+            for i, j in zip(row_indices, col_indices)
+            if not st.session_state.preferences.get(st.session_state.list1_items[i], {}).get(st.session_state.list2_items[j])
+        ]
+        if no_preference_matches:
+            st.warning(
+                "The following item(s) from List 1 were matched to something they did not rank: "
+                + ", ".join(f"**{name}**" for name in no_preference_matches)
+            )
+
         st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
         for i, j in zip(row_indices, col_indices):
             item1 = st.session_state.list1_items[i]

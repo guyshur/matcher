@@ -83,8 +83,7 @@ else:
                         min_value=0,
                         max_value=max_preferences,
                         value=int(current_val) if current_val else 0,
-                        key=key,
-                        label_visibility="collapsed"
+                        key=key
                     )
                     if rank > 0:
                         st.session_state.preferences[item1][item2] = rank
@@ -95,6 +94,7 @@ else:
 
     # Run matching algorithm
     st.subheader("🔄 Optimal Matching")
+    run_matching = st.button("🚀 Run Algorithm", key="run_algo_btn")
 
     def compute_matching(preferences: Dict, list1: List[str], list2: List[str]) -> Tuple[np.ndarray, float]:
         """
@@ -125,7 +125,7 @@ else:
 
         return row_indices, col_indices, total_score, cost_matrix
 
-    if any(st.session_state.preferences.values()):
+    if any(st.session_state.preferences.values()) and run_matching:
         row_indices, col_indices, total_score, cost_matrix = compute_matching(
             st.session_state.preferences,
             st.session_state.list1_items,

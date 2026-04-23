@@ -274,6 +274,16 @@ else:
 
     # Algorithm
     st.subheader("Optimal Assignment")
+
+    n1 = len(st.session_state.list1_items)
+    n2 = len(st.session_state.list2_items)
+    if n1 > n2:
+        st.error(
+            f"No complete matching is possible: List 1 has {n1} items but List 2 only has {n2}. "
+            f"Every item in List 1 needs a unique match in List 2, so at least {n1 - n2} item(s) "
+            f"from List 1 will be unmatched. Add more items to List 2 or remove items from List 1."
+        )
+
     run_matching = st.button("Run Algorithm", key="run_algo_btn")
 
     def compute_matching(
@@ -303,6 +313,19 @@ else:
             st.session_state.list2_items,
             max_preferences
         )
+
+        # Identify unmatched List 1 items (only possible when len(list1) > len(list2))
+        matched_list1 = set(row_indices)
+        unmatched = [
+            st.session_state.list1_items[i]
+            for i in range(len(st.session_state.list1_items))
+            if i not in matched_list1
+        ]
+        if unmatched:
+            st.warning(
+                f"No complete matching exists. The following item(s) from List 1 could not be matched: "
+                + ", ".join(f"**{name}**" for name in unmatched)
+            )
 
         st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
         for i, j in zip(row_indices, col_indices):

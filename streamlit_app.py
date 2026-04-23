@@ -96,7 +96,7 @@ else:
     st.subheader("🔄 Optimal Matching")
     run_matching = st.button("🚀 Run Algorithm", key="run_algo_btn")
 
-    def compute_matching(preferences: Dict, list1: List[str], list2: List[str]) -> Tuple[np.ndarray, float]:
+    def compute_matching(preferences: Dict, list1: List[str], list2: List[str], max_prefs: int) -> Tuple[np.ndarray, float]:
         """
         Use Hungarian algorithm to find maximum weight matching.
 
@@ -104,20 +104,22 @@ else:
             preferences: Dict mapping list1 items to their ranked preferences
             list1: List of items from list 1
             list2: List of items from list 2
+            max_prefs: Maximum preference rank (1 is most preferred)
 
         Returns:
             Indices of matching and total satisfaction score
         """
-        # Create cost matrix (negative because we want to maximize)
+        # Create cost matrix (lower cost = higher preference)
         cost_matrix = np.zeros((len(list1), len(list2)))
 
         for i, item1 in enumerate(list1):
             for j, item2 in enumerate(list2):
                 if item1 in preferences and item2 in preferences[item1]:
-                    # Higher rank = higher preference, so use negative for minimization
-                    cost_matrix[i, j] = -preferences[item1][item2]
+                    # Invert rank so 1 (most preferred) has lowest cost for minimization
+                    rank = preferences[item1][item2]
+                    cost_matrix[i, j] = max_prefs + 1 - rank
                 else:
-                    cost_matrix[i, j] = 0  # No preference given
+                    cost_matrix[i, j] = max_prefs + 1  # No preference given (worst cost)
 
         # Solve assignment problem
         row_indices, col_indices = linear_sum_assignment(cost_matrix)
@@ -129,7 +131,8 @@ else:
         row_indices, col_indices, total_score, cost_matrix = compute_matching(
             st.session_state.preferences,
             st.session_state.list1_items,
-            st.session_state.list2_items
+            st.session_state.list2_items,
+            max_preferences
         )
 
         # Display results

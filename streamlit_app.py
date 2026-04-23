@@ -115,9 +115,8 @@ else:
         for i, item1 in enumerate(list1):
             for j, item2 in enumerate(list2):
                 if item1 in preferences and item2 in preferences[item1]:
-                    # Invert rank so 1 (most preferred) has lowest cost for minimization
-                    rank = preferences[item1][item2]
-                    cost_matrix[i, j] = max_prefs + 1 - rank
+                    # Use rank directly: lower rank (1 = most preferred) gets lower cost
+                    cost_matrix[i, j] = preferences[item1][item2]
                 else:
                     cost_matrix[i, j] = max_prefs + 1  # No preference given (worst cost)
 
